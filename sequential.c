@@ -11,7 +11,7 @@ double determinantOfMatrix(double mat[3][3])
           + mat[0][2] * (mat[1][0] * mat[2][1] - mat[1][1] * mat[2][0]);
     return ans;
 }
- 
+
 // This function finds the solution of system of
 // linear equations using cramer's rule
 int findSolution(double coeff[3][4])
@@ -41,13 +41,13 @@ int findSolution(double coeff[3][4])
         { coeff[1][0], coeff[1][1], coeff[1][3] },
         { coeff[2][0], coeff[2][1], coeff[2][3] },
     };
- 
+
     // Calculating Determinant of Matrices d, d1, d2, d3
     double D = determinantOfMatrix(d);
     double D1 = determinantOfMatrix(d1);
     double D2 = determinantOfMatrix(d2);
     double D3 = determinantOfMatrix(d3);
- 
+
     // Case 1
     if (D != 0) {
         // Coeff have a unique solution. Apply Cramer's Rule
@@ -89,7 +89,7 @@ int main(){
     // Iterating over top layer
     printf("---------------------Start of Top layer iteration---------------------\n");
     int j;
-    double H1, H2, H3 = 0;
+    H3 = 0;
     for(j = 1; j <= 17; j++){
         double top[3][4] = {
             {0, -(1+cos(theta)), 0, (Wr-W)},
@@ -113,7 +113,7 @@ int main(){
                 {0, -2*cos(theta), 0, -Wij*sin(theta)},
                 {1, 2*sin(theta), -2, Wij*sin(theta)},
                 {(2*i+1)*r, r*sin(theta)*(4*i + 1 + cos(theta))-2*cos(theta)*((2*j-1)*r+2*i*r*sin(theta)), -2*(2*i+1)*r, Wij*(2*(i+1))*r*sin(theta)-cos(theta)*((2*j-1)*r+(2*i+1)*r*sin(theta)) - Wr*((2*j-1)*r+2*i*r*sin(theta))}
-            };    
+            };
 
             H2 = H2 + findSolution(inter);
             printf("\n");
