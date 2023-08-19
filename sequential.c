@@ -14,7 +14,7 @@ double determinantOfMatrix(double mat[3][3])
 
 // This function finds the solution of system of
 // linear equations using cramer's rule
-int findSolution(double coeff[3][4])
+double findSolution(double coeff[3][4])
 {
     double x, y, z;
     // Matrix d using coeff as given in cramer's rule
@@ -69,7 +69,7 @@ int findSolution(double coeff[3][4])
 int main(){
     // Define inputs
     double W, Height, Length, r, Wr, StrainRate, dH;
-    double H1, H2, H3;
+    double H1=0, H2=0, H3=0;
     W = 8.7;
 
     // Initial dimensions of model
@@ -84,17 +84,17 @@ int main(){
 
     // Considering one minute of time has passed
     dH = StrainRate;
-    double theta = atan(dH/Height);
+    double theta = atanf(dH/Height);
 
     // Iterating over top layer
     printf("---------------------Start of Top layer iteration---------------------\n");
     int j;
-    H3 = 0;
+    H1,H2,H3 = 0;
     for(j = 1; j <= 17; j++){
         double top[3][4] = {
-            {0, -(1+cos(theta)), 0, (Wr-W)},
+            {0, -(1+cos(theta)), 0, -(Wr+W)},
             {1, sin(theta), -2, 0},
-            {17*r, -(((2*j-1)*r+16*r*sin(theta))+cos(theta)*((2*j-1)*r+15*r*sin(theta))), -34*r, (Wr-W)*(2*j-1)*r+16*r*sin(theta)}
+            {17*r, -(((2*j-1)*r+16*r*sin(theta))+cos(theta)*((2*j-1)*r+15*r*sin(theta)))+16*r*sin(theta), -34*r, -(Wr+W)*((2*j-1)*r+16*r*sin(theta))}
         };
 
         H1 = H1 + findSolution(top);
@@ -106,13 +106,16 @@ int main(){
     printf("---------------------Start of Intermediate layer iteration---------------------\n");
     int i;
     double Wij;
+
+    Wij= W+5040*Wr;
+
     for(i = 1; i <= 6; i++){
         for(j = 1; j <= 17; j++){
-            Wij = W + (8-i)*Wr;
             double inter[3][4] = {
-                {0, -2*cos(theta), 0, -Wij*sin(theta)},
+                {0, -2*cos(theta), 0,-(Wr+Wij*cos(theta))},
                 {1, 2*sin(theta), -2, Wij*sin(theta)},
-                {(2*i+1)*r, r*sin(theta)*(4*i + 1 + cos(theta))-2*cos(theta)*((2*j-1)*r+2*i*r*sin(theta)), -2*(2*i+1)*r, Wij*(2*(i+1))*r*sin(theta)-cos(theta)*((2*j-1)*r+(2*i+1)*r*sin(theta)) - Wr*((2*j-1)*r+2*i*r*sin(theta))}
+                {(2*i+1)*r,4*i*r*sin(theta)+r*sin(theta)-2*cos(theta)*((2*j-1)*r+2*i*r*sin(theta))+r*cos(theta)*sin(theta), -2*(2*i+1)*r, Wij*(2*(i+1))*r*sin(theta)-cos(theta)*((2*j-1)*r+(2*i+1)*r*sin(theta)) - Wr*((2*j-1)*r+2*i*r*sin(theta))}
+
             };
 
             H2 = H2 + findSolution(inter);
@@ -128,8 +131,8 @@ int main(){
         Wj = W + 8*Wr;
         double bottom[3][4] = {
             {0. -(1+cos(theta)), 0, -(Wr + Wj*cos(theta))},
-            {1, sin(theta), -2, Wj},
-            {r, -r*((2*j-1)*(1+cos(theta))+sin(theta)), -2*r, Wj*r*(sin(theta) - cos(theta)*((2*j-1)+sin(theta))) - W*r}
+            {1, sin(theta), -2, Wj*sin(theta)},
+            {r, -r*((2*j-1)*(1+cos(theta))-sin(theta)), -2*r, Wj*r*(sin(theta) - cos(theta)*((2*j-1)+sin(theta))) - W*r}
         };
 
         H3 = H3 + findSolution(bottom);
